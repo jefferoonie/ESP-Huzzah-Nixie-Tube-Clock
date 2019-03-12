@@ -14,14 +14,13 @@ const char* SSID_PASS002 = "";
 const char* SSID_NAME003 = "";
 const char* SSID_PASS003 = "";
 
+const char*         NTP_SERVER_NAME = "time.nist.gov";  // NTP Server Address
 const int           NTP_PACKET_SIZE = 48;               // NTP time stamp is in the first 48 bytes of the message
-const char*         NTP_SERVER_NAME = "time.nist.gov";
 const unsigned long NTP_INTERVAL = 3600000;             // Request NTP time every hour
 const unsigned long NTP_WAIT = 10800000;                // How long to let clock go without talking to NTP server
 
-//Toggle Timezones
-const unsigned long TIMEZONE_OFFSET = 18000; 
-//const unsigned long TIMEZONE_OFFSET = 21600;
+//Toggle DST (US central timezone offsets)
+const unsigned long TIMEZONE_OFFSET = 18000;            // Normal = 21600; DST = 18000
 
 ESP8266WiFiMulti  wifiMulti;      
 WiFiUDP           UDP;                     
@@ -74,7 +73,9 @@ void loop()
 
   // Check if an NTP response has arrived and get the (UNIX) time
   uint32_t time = getTime();                  
-  if (time)                                   // If a new timestamp has been received
+  
+  // If a new timestamp has been received
+  if (time)
   {                                  
     lastNTPResponse = currentMillis;
   } 
@@ -121,14 +122,16 @@ void startUDP()
   UDP.begin(123);
 }
 
-uint32_t getTime() {
+uint32_t getTime()
+{
   // If there's no response (yet)
   if (UDP.parsePacket() == 0) 
   { 
     return 0;
   }
   
-  UDP.read(ntpBuffer, NTP_PACKET_SIZE); // read the packet into the buffer
+  // read the packet into the buffer
+  UDP.read(ntpBuffer, NTP_PACKET_SIZE);
   // Combine the 4 timestamp bytes into one 32-bit number
   uint32_t ntpTime = (ntpBuffer[40] << 24) | (ntpBuffer[41] << 16) | (ntpBuffer[42] << 8) | ntpBuffer[43];
   // Convert NTP time to a UNIX timestamp:

@@ -8,7 +8,7 @@
 #include <Wire.h>
 
 const char* SSID_NAME001 = "someSSID";
-const char* SSID_PASS001 = "somePAssword";
+const char* SSID_PASS001 = "somePassword";
 const char* SSID_NAME002 = "";
 const char* SSID_PASS002 = "";
 const char* SSID_NAME003 = "";

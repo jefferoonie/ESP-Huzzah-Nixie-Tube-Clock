@@ -3,5 +3,5 @@ ESP Huzzah Nixie Tube Clock
 
 Created using:
 - Adafruit HUZZAH ESP8266 Breakout --> MCP23017 --> K155ID1
-- - https://www.adafruit.com/product/2471
+- - HUZZAH - https://www.adafruit.com/product/2471
 

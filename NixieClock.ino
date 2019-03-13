@@ -87,7 +87,7 @@ void loop()
     Wire.beginTransmission(0x20); //starts talking to slave device
     Wire.write(0x13); //selects the GPIOB pins
     Wire.write(dec2bcd(getMinutes(actualTime))); //turns on pin 0 of GPIOA
-    Wire.endTransmission();//ends communication with1the device
+    Wire.endTransmission();//ends communication with the device
   }  
 }
 

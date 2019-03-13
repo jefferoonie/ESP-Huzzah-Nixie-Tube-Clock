@@ -60,6 +60,8 @@ unsigned long prevNTP = 0;
 unsigned long lastNTPResponse = millis();
 unsigned long prevActualTime = 0;
 
+uint32_t time = 0;
+
 void loop()
 {
   unsigned long currentMillis = millis();
@@ -69,21 +71,18 @@ void loop()
   { 
     prevNTP = currentMillis;
     sendNTPPacket(timeServerIP);
-  }
-
-  // Check if an NTP response has arrived and get the (UNIX) time
-  uint32_t time = getTime();                  
-  
-  // If a new timestamp has been received
-  if (time)
-  {                                  
-    lastNTPResponse = currentMillis;
-  } 
-  else if ((currentMillis - lastNTPResponse) > NTP_WAIT) 
-  {
-    //Reset ESP if NTP_WAIT time has passed.
-    ESP.reset();
-  }
+    time = getTime();
+    
+    // If a new timestamp has been received
+    if (time)
+    {                                  
+      lastNTPResponse = currentMillis;
+    } 
+    else if ((currentMillis - lastNTPResponse) > NTP_WAIT) 
+    {
+      ESP.reset();
+    }
+  }              
 
   uint32_t actualTime = time + (currentMillis - lastNTPResponse)/1000;
   if (actualTime != prevActualTime && time != 0) 

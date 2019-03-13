@@ -60,34 +60,22 @@ unsigned long prevNTP = 0;
 unsigned long lastNTPResponse = millis();
 unsigned long prevActualTime = 0;
 
-uint32_t xTime = 0;
+uint32_t unixTimeLocal = 0;
 
 void loop()
 {
 
   unsigned long currentMillis = millis();
+ = unixTimeNet;                                  
+    lastNTPResponse = currentMillis;
+  } 
+  else if ((currentMillis - lastNTPResponse) > NTP_WAIT) 
+  {
+    ESP.reset();
+  }
 
-  // Send an NTP request, as long as an hour has past, or on power up.
-  if (currentMillis - prevNTP > NTP_INTERVAL) 
-  { 
-    prevNTP = currentMillis;
-    sendNTPPacket(timeServerIP);
-
-    xTime = getTime();
-    
-    // If a new timestamp has been received
-    if (xTime)
-    {                                  
-      lastNTPResponse = currentMillis;
-    } 
-    else if ((currentMillis - lastNTPResponse) > NTP_WAIT) 
-    {
-      ESP.reset();
-    }
-  }              
-
-  uint32_t actualTime = xTime + (currentMillis - lastNTPResponse)/1000;
-  if (actualTime != prevActualTime && xTime != 0) 
+  uint32_t actualTime = unixTimeLocal + (currentMillis - lastNTPResponse)/1000;
+  if (actualTime != prevActualTime && unixTimeLocal != 0) 
   { 
     prevActualTime = actualTime;
    
@@ -134,14 +122,14 @@ uint32_t getTime()
   // read the packet into the buffer
   UDP.read(ntpBuffer, NTP_PACKET_SIZE);
   // Combine the 4 timestamp bytes into one 32-bit number
-  uint32_t ntxTime = (ntpBuffer[40] << 24) | (ntpBuffer[41] << 16) | (ntpBuffer[42] << 8) | ntpBuffer[43];
+  uint32_t ntpTime = (ntpBuffer[40] << 24) | (ntpBuffer[41] << 16) | (ntpBuffer[42] << 8) | ntpBuffer[43];
   // Convert NTP time to a UNIX timestamp:
   // Unix time starts on Jan 1 1970. That's 2208988800 seconds in NTP time:
   const uint32_t seventyYears = 2208988800UL;
   // subtract seventy years:
-  uint32_t unixTime = ntxTime - seventyYears;
-  unixTime = unixTime - TIMEZONE_OFFSET;
-  return unixTime;
+  uint32_t uxTime = ntpTime - seventyYears;
+  uxTime = uxTime - TIMEZONE_OFFSET;
+  return uxTime;
 }
 
 void sendNTPPacket(IPAddress& address) 
@@ -155,20 +143,20 @@ void sendNTPPacket(IPAddress& address)
   UDP.endPacket();
 }
 
-inline int getSeconds(uint32_t unixTime) 
+inline int getSeconds(uint32_t uxTime) 
 {
-  return unixTime % 60;
+  return uxTime % 60;
 }
 
-inline int getMinutes(uint32_t unixTime) 
+inline int getMinutes(uint32_t uxTime) 
 {
-  return unixTime / 60 % 60;
+  return uxTime / 60 % 60;
 }
 
-inline int getHours(uint32_t unixTime) 
+inline int getHours(uint32_t uxTime) 
 { 
   int hr12;
-  int hr24 = unixTime / 3600 % 24;
+  int hr24 = uxTime / 3600 % 24;
 
   if (hr24==0 or hr24==12) hr12=12;
   else hr12=hr24%12;

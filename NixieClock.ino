@@ -60,10 +60,11 @@ unsigned long prevNTP = 0;
 unsigned long lastNTPResponse = millis();
 unsigned long prevActualTime = 0;
 
-uint32_t time = 0;
+uint32_t xTime = 0;
 
 void loop()
 {
+
   unsigned long currentMillis = millis();
 
   // Send an NTP request, as long as an hour has past, or on power up.
@@ -71,10 +72,11 @@ void loop()
   { 
     prevNTP = currentMillis;
     sendNTPPacket(timeServerIP);
-    time = getTime();
+
+    xTime = getTime();
     
     // If a new timestamp has been received
-    if (time)
+    if (xTime)
     {                                  
       lastNTPResponse = currentMillis;
     } 
@@ -84,8 +86,8 @@ void loop()
     }
   }              
 
-  uint32_t actualTime = time + (currentMillis - lastNTPResponse)/1000;
-  if (actualTime != prevActualTime && time != 0) 
+  uint32_t actualTime = xTime + (currentMillis - lastNTPResponse)/1000;
+  if (actualTime != prevActualTime && xTime != 0) 
   { 
     prevActualTime = actualTime;
    
@@ -132,12 +134,12 @@ uint32_t getTime()
   // read the packet into the buffer
   UDP.read(ntpBuffer, NTP_PACKET_SIZE);
   // Combine the 4 timestamp bytes into one 32-bit number
-  uint32_t ntpTime = (ntpBuffer[40] << 24) | (ntpBuffer[41] << 16) | (ntpBuffer[42] << 8) | ntpBuffer[43];
+  uint32_t ntxTime = (ntpBuffer[40] << 24) | (ntpBuffer[41] << 16) | (ntpBuffer[42] << 8) | ntpBuffer[43];
   // Convert NTP time to a UNIX timestamp:
   // Unix time starts on Jan 1 1970. That's 2208988800 seconds in NTP time:
   const uint32_t seventyYears = 2208988800UL;
   // subtract seventy years:
-  uint32_t unixTime = ntpTime - seventyYears;
+  uint32_t unixTime = ntxTime - seventyYears;
   unixTime = unixTime - TIMEZONE_OFFSET;
   return unixTime;
 }

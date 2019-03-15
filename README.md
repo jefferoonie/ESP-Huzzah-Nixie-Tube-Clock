@@ -7,3 +7,6 @@ ESP Huzzah Nixie Tube Clock
 ## Build Info:
 - Program: HuzzahNixieClock.ino
 - Schematic: Huzzah2Nixie Schematic.svg
+
+## Other GitHub References:
+- NTP:  [tttapa/ESP8266](https://github.com/tttapa/ESP8266)

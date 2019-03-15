@@ -10,3 +10,6 @@ ESP Huzzah Nixie Tube Clock
 
 ## Other GitHub References:
 - NTP:  [tttapa/ESP8266](https://github.com/tttapa/ESP8266)
+
+## Other References:
+- MCP23017: [How to Connect an MCP23017 I/O Port Expander to an Arduino](http://www.learningaboutelectronics.com/Articles/MCP23017-IO-port-expander-circuit-with-arduino.php)

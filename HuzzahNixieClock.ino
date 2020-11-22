@@ -64,8 +64,6 @@ uint32_t unixTimeLocal = 0;
 
 void loop()
 {
- 
-
   unsigned long currentMillis = millis();
 
   if (currentMillis - prevNTP > NTP_INTERVAL) {

@@ -1,4 +1,4 @@
-// This is hard coded for daylight savings US Central time zone.
+`// This is hard coded for daylight savings US Central time zone.
 // I plan on making that controllable.
 // Time Server is also hard coded.
 
@@ -7,8 +7,8 @@
 #include <WiFiUdp.h>
 #include <Wire.h>
 
-const char* SSID_NAME001 = "someSSID";
-const char* SSID_PASS001 = "somePassword";
+const char* SSID_NAME001 = "SomeSSID";
+const char* SSID_PASS001 = "SomePWD";
 const char* SSID_NAME002 = "";
 const char* SSID_PASS002 = "";
 const char* SSID_NAME003 = "";
@@ -20,7 +20,7 @@ const unsigned long NTP_INTERVAL = 3600000;             // Request NTP time ever
 const unsigned long NTP_WAIT = 10800000;                // How long to let clock go without talking to NTP server
 
 //Toggle DST (US central timezone offsets)
-const unsigned long TIMEZONE_OFFSET = 18000;            // Normal = 21600; DST = 18000
+const unsigned long TIMEZONE_OFFSET = 21600;            // Normal = 21600; DST = 18000
 
 ESP8266WiFiMulti  wifiMulti;      
 WiFiUDP           UDP;                     
@@ -64,9 +64,19 @@ uint32_t unixTimeLocal = 0;
 
 void loop()
 {
+ 
 
   unsigned long currentMillis = millis();
- = unixTimeNet;                                  
+
+  if (currentMillis - prevNTP > NTP_INTERVAL) {
+    prevNTP = currentMillis;
+    sendNTPPacket(timeServerIP);
+  }
+
+  uint32_t time = getTime();
+  if (time) {
+    unixTimeLocal = time;
+    lastNTPResponse = currentMillis;                                 
     lastNTPResponse = currentMillis;
   } 
   else if ((currentMillis - lastNTPResponse) > NTP_WAIT) 

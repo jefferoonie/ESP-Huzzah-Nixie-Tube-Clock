@@ -1,4 +1,4 @@
-`// This is hard coded for daylight savings US Central time zone.
+// This is hard coded for US Central time zone.
 // I plan on making that controllable.
 // Time Server is also hard coded.
 
@@ -65,12 +65,15 @@ uint32_t unixTimeLocal = 0;
 void loop()
 {
   unsigned long currentMillis = millis();
-
+   
+  // If a minute has passed since last NTP request.
   if (currentMillis - prevNTP > NTP_INTERVAL) {
     prevNTP = currentMillis;
     sendNTPPacket(timeServerIP);
   }
 
+  // Check if an NTP response has arrived and get the (UNIX) time
+  // if a new timestamp has been received.
   uint32_t time = getTime();
   if (time) {
     unixTimeLocal = time;
